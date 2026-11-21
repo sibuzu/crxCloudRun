@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-source "$root/utils/crx_docker_common.sh"
+tool_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+source "$tool_dir/crx_docker_common.sh"
 usage() { printf 'Usage: %s [-y] <server-name>\n' "${0##*/}"; }
 
 confirm=1

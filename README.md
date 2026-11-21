@@ -7,8 +7,8 @@
 先在同一個 Docker Engine 啟動 crxDB，再執行下列指令。只給名稱會列出可用的 release branch，由新到舊。指定 branch 時會將該次 checkout 的 commit 建成映像，容器名稱為 `crx-pu30`，程式內 Server ID 為 `PU30`。日誌、報價和 K 線快取各自有專用 Docker volume。
 
 ```sh
-./setup_crx_docker.sh pu30
-./setup_crx_docker.sh pu30 20261121
+./tools/setup_crx_docker.sh pu30
+./tools/setup_crx_docker.sh pu30 20261121
 docker logs -f crx-pu30
 ```
 
@@ -28,8 +28,8 @@ docker exec crx-pu30 python3 /app/TestCoinbase.py --count 1
 
 ```sh
 docker stop crx-pu30
-./remove_crx_docker.sh pu30
-./remove_crx_docker.sh -y pu30
+./tools/remove_crx_docker.sh pu30
+./tools/remove_crx_docker.sh -y pu30
 ```
 
 移除指令僅處理這套部署腳本管理的 Server 和專用資料卷。預設會詢問是否確認移除，`-y` 會直接執行。若只需暫停並保留資料卷，使用 `docker stop`，之後可用 `docker start` 恢復。

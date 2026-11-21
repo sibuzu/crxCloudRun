@@ -8,9 +8,9 @@
     ".NETCoreApp,Version=v10.0": {
       "crxServer/1.0.0": {
         "dependencies": {
-          "DeviceId": "6.9.0",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.6",
-          "Microsoft.Extensions.Logging.Abstractions": "9.0.6",
+          "DeviceId": "6.11.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.7",
+          "Microsoft.Extensions.Logging.Abstractions": "10.0.7",
           "Newtonsoft.Json": "13.0.4",
           "crx.Compatibility": "1.0.0",
           "log4net": "3.6.0"
@@ -19,11 +19,11 @@
           "crxServer.dll": {}
         }
       },
-      "DeviceId/6.9.0": {
+      "DeviceId/6.11.0": {
         "runtime": {
-          "lib/net9.0/DeviceId.dll": {
-            "assemblyVersion": "6.9.0.0",
-            "fileVersion": "6.9.0.0"
+          "lib/net10.0/DeviceId.dll": {
+            "assemblyVersion": "6.11.0.0",
+            "fileVersion": "6.11.0.0"
           }
         }
       },
@@ -38,22 +38,22 @@
           }
         }
       },
-      "Microsoft.Extensions.DependencyInjection.Abstractions/9.0.6": {
+      "Microsoft.Extensions.DependencyInjection.Abstractions/10.0.7": {
         "runtime": {
-          "lib/net9.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {
-            "assemblyVersion": "9.0.0.0",
-            "fileVersion": "9.0.625.26613"
+          "lib/net10.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {
+            "assemblyVersion": "10.0.0.0",
+            "fileVersion": "10.0.726.21808"
           }
         }
       },
-      "Microsoft.Extensions.Logging.Abstractions/9.0.6": {
+      "Microsoft.Extensions.Logging.Abstractions/10.0.7": {
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.6"
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.7"
         },
         "runtime": {
-          "lib/net9.0/Microsoft.Extensions.Logging.Abstractions.dll": {
-            "assemblyVersion": "9.0.0.0",
-            "fileVersion": "9.0.625.26613"
+          "lib/net10.0/Microsoft.Extensions.Logging.Abstractions.dll": {
+            "assemblyVersion": "10.0.0.0",
+            "fileVersion": "10.0.726.21808"
           }
         }
       },
@@ -120,12 +120,12 @@
       "serviceable": false,
       "sha512": ""
     },
-    "DeviceId/6.9.0": {
+    "DeviceId/6.11.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-2nfdZxcEfXVKJSg6n0Cv9JdH1UmlEdIIplfRy5AGqhzzmOOy5lK/kPcP0dHky1ZbwxqGIlf4fMq2qYCtMtX+0A==",
-      "path": "deviceid/6.9.0",
-      "hashPath": "deviceid.6.9.0.nupkg.sha512"
+      "sha512": "sha512-GrFSc5Epv5MwgcezxgclRZIqm+jW6uNaZdGhtilqJs0MLU768nMzwP3+CgiZsJJQ1azPwQYmZq1Y4fdQafxwdg==",
+      "path": "deviceid/6.11.0",
+      "hashPath": "deviceid.6.11.0.nupkg.sha512"
     },
     "log4net/3.6.0": {
       "type": "package",
@@ -134,19 +134,19 @@
       "path": "log4net/3.6.0",
       "hashPath": "log4net.3.6.0.nupkg.sha512"
     },
-    "Microsoft.Extensions.DependencyInjection.Abstractions/9.0.6": {
+    "Microsoft.Extensions.DependencyInjection.Abstractions/10.0.7": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-0Zn6nR/6g+90MxskZyOOMPQvnPnrrGu6bytPwkV+azDcTtCSuQ1+GJUrg8Klmnrjk1i6zMpw2lXijl+tw7Q3kA==",
-      "path": "microsoft.extensions.dependencyinjection.abstractions/9.0.6",
-      "hashPath": "microsoft.extensions.dependencyinjection.abstractions.9.0.6.nupkg.sha512"
+      "sha512": "sha512-Z6mfFEaFcwCfSboxJwOLfu7/31npCY9q70WUamHW/vRQhDvBKOT4Vf9YkZj5J6hLvJpb0oDEYfHunQZj0xxvKw==",
+      "path": "microsoft.extensions.dependencyinjection.abstractions/10.0.7",
+      "hashPath": "microsoft.extensions.dependencyinjection.abstractions.10.0.7.nupkg.sha512"
     },
-    "Microsoft.Extensions.Logging.Abstractions/9.0.6": {
+    "Microsoft.Extensions.Logging.Abstractions/10.0.7": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-LFnyBNK7WtFmKdnHu3v0HOYQ8BcjYuy0jdC9pgCJ/rbLKoJEG9/dBzSKMEeeWDbDeoWS0TIxOC8a9CM5ufca3A==",
-      "path": "microsoft.extensions.logging.abstractions/9.0.6",
-      "hashPath": "microsoft.extensions.logging.abstractions.9.0.6.nupkg.sha512"
+      "sha512": "sha512-tIEcQ2gvERrH2KiCjdsVcHGhXt9lIsuDStfOIeZWr7/fP8IXhGiYfx0/80PNI7WPO2IYuFtlZLSlnTS8+/Mchw==",
+      "path": "microsoft.extensions.logging.abstractions/10.0.7",
+      "hashPath": "microsoft.extensions.logging.abstractions.10.0.7.nupkg.sha512"
     },
     "Newtonsoft.Json/13.0.4": {
       "type": "package",

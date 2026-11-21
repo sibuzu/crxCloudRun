@@ -4,7 +4,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY app/ ./
-COPY CoinbaseSocket.py BinanceKline.py TestCoinbase.py TestBinance.py start_server.py ./
+COPY utils/CoinbaseSocket.py utils/BinanceKline.py utils/TestCoinbase.py utils/TestBinance.py utils/start_server.py ./
 RUN mkdir -p Log Quotes Kline && chown app:app Log Quotes Kline
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 TZ=Asia/Taipei
 USER app

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-source "$root/utils/crx_docker_common.sh"
+root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$root/tools/crx_docker_common.sh"
 release_repo="${CRX_CLOUD_RUN_REPO:-https://github.com/sibuzu/crxCloudRun.git}"
 
 usage() {
