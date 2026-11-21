@@ -622,6 +622,19 @@ def root():
         'example': '/kline?symbol=BTC&hours=20'
     })
 
+def _hide_development_server_warning(record):
+    first_line, _, remaining = record.getMessage().partition("\n")
+    if "WARNING: This is a development server." not in first_line:
+        return True
+    if not remaining:
+        return False
+
+    # Werkzeug can include the listening address in the same log record.
+    record.msg = remaining
+    record.args = ()
+    return True
+
+
 def start_server(host='0.0.0.0', port=5000):
     """
     啟動Flask服務器（隊列模式）
@@ -639,9 +652,12 @@ def start_server(host='0.0.0.0', port=5000):
     queue_thread = threading.Thread(target=queue_processor, daemon=True)
     queue_thread.start()
 
+    werkzeug_log = logging.getLogger("werkzeug")
+    werkzeug_log.addFilter(_hide_development_server_warning)
     try:
         app.run(host=host, port=port, debug=False, threaded=True)
     finally:
+        werkzeug_log.removeFilter(_hide_development_server_warning)
         # 停止隊列處理器
         processing = False
         request_queue.put(None)  # 發送停止信號
