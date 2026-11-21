@@ -32,9 +32,15 @@ if [[ -z "$branch" ]]; then
 fi
 current_revision="$(docker container inspect --format '{{index .Config.Labels "org.opencontainers.image.revision"}}' "$container_id")"
 crx_fetch_release
+reuse_image=false
 if [[ "$branch" == "$current_branch" && "$revision" == "$current_revision" ]]; then
-    printf '%s already uses branch %s (%s).\n' "$container_name" "$branch" "${revision:0:12}"
-    exit 0
+    group="$(docker container inspect --format '{{index .Config.Labels "com.docker.compose.project"}}' "$container_id")"
+    if [[ "$group" == "$server_group" ]]; then
+        printf '%s already uses branch %s (%s).\n' "$container_name" "$branch" "${revision:0:12}"
+        exit 0
+    fi
+    image="$(docker container inspect --format '{{.Image}}' "$container_id")"
+    reuse_image=true
 fi
 
 backup_name="$container_name-update-backup"
@@ -46,7 +52,7 @@ network="$(docker container inspect --format '{{.HostConfig.NetworkMode}}' "$con
 dns="$(docker container inspect --format '{{if .HostConfig.Dns}}{{index .HostConfig.Dns 0}}{{end}}' "$container_id")"
 dns="${dns:-8.8.8.8}"
 crx_find_volumes
-crx_build_release
+if [[ "$reuse_image" == false ]]; then crx_build_release; fi
 crx_ensure_mounts
 
 running="$(docker container inspect --format '{{.State.Running}}' "$container_id")"

@@ -6,7 +6,9 @@
 
 ## 安裝 Server
 
-先在同一個 Docker Engine 啟動 crxDB，再執行下列指令。只給名稱會列出可用的 release branch，由新到舊。指定 branch 時會將該次 checkout 的 commit 建成映像，容器名稱為 `crx-pu30`，程式內 Server ID 為 `PU30`。日誌、報價和 K 線快取各自有專用 Docker volume。
+先在同一個 Docker Engine 啟動 crxDB，再執行下列指令。只給名稱會列出可用的 release branch，由新到舊。指定 branch 時會將該次 checkout 的 commit 建成映像，容器名稱為 `crx-pu30`，程式內 Server ID 為 `PU30`。每台 Server 使用一個資料卷，例如 `crx-pu30-data`，內有 `Log/`、`Quotes/` 和 `Kline/`。
+
+這些 Server 會歸到 Docker Desktop 的 `crx-server` 群組。
 
 ```sh
 ./tools/crx_docker_create.sh pu30
@@ -50,4 +52,4 @@ docker stop crx-pu30
 
 `crx_docker_remove.sh` 會拒絕移除仍在執行的 Server。指定 `--force` 可先停止容器再刪除容器與專用資料卷。預設先確認，`-y` 可跳過確認。若只需暫停並保留資料卷，使用 `docker stop`，之後可用 `docker start` 恢復。
 
-`crx_docker_clear.sh` 會在確認後刪除目前 Docker Engine 上所有沒有容器使用的資料卷，範圍包含其他專案。
+`crx_docker_clear.sh` 會列出資料卷總數、待刪數量與名稱，確認後才刪除清單上的未使用本機資料卷。清單可能包含其他專案。

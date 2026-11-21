@@ -55,7 +55,7 @@ fi
 export CRX_LOCAL_TOKEN="${CRX_LOCAL_TOKEN:?missing CRX_LOCAL_TOKEN}"
 
 if [[ -z "${CRX_TELEGRAM_URL:-}" && -f "$root/.env" && -f "$root/docker/compose.yaml" ]]; then
-    CRX_TELEGRAM_URL="$(docker compose --env-file "$root/.env" -f "$root/docker/compose.yaml" config --format json |
+    CRX_TELEGRAM_URL="$(docker compose --env-file "$root/.env" -f "$root/docker/compose.yaml" --profile all-servers config --format json |
         python3 -c 'import json,sys; print(json.load(sys.stdin)["services"]["crxserver"]["environment"].get("CRX_TELEGRAM_URL", ""))')"
 fi
 export CRX_TELEGRAM_URL="${CRX_TELEGRAM_URL:-}"

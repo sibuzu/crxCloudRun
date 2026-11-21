@@ -45,7 +45,7 @@ if [[ -d "$release/.git" ]]; then
 fi
 
 stage="$(mktemp -d)"
-trap 'rm -r -- "$stage"' EXIT
+trap 'rm -rf -- "$stage"' EXIT
 
 runtime_repo="$run_root"
 if [[ -d "$release/.git" ]]; then runtime_repo="$release"; fi

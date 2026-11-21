@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 release_repo="${CRX_CLOUD_RUN_REPO:-https://github.com/sibuzu/crxCloudRun.git}"
+server_group=crx-server
 volume_dirs=(Log Quotes Kline)
 
 crx_source_root() {
@@ -21,7 +22,7 @@ crx_select_server() {
     }
     container_name="crx-$server_name"
     server_id="${server_name^^}"
-    volume_prefix="crxcloudrun-$server_name"
+    data_volume="$container_name-data"
     owner_label="io.github.sibuzu.crxcloudrun.server"
 }
 
@@ -40,17 +41,14 @@ crx_inspect_container() {
 
 crx_find_volumes() {
     volumes=()
-    local directory volume owner
-    for directory in "${volume_dirs[@]}"; do
-        volume="$volume_prefix-${directory,,}"
-        if owner="$(docker volume inspect --format "{{ index .Labels \"$owner_label\" }}" "$volume" 2>/dev/null)"; then
-            if [[ "$owner" != "$container_name" ]]; then
-                printf 'Volume %s belongs to another deployment.\n' "$volume" >&2
-                return 1
-            fi
-            volumes+=("$volume")
+    local owner
+    if owner="$(docker volume inspect --format "{{ index .Labels \"$owner_label\" }}" "$data_volume" 2>/dev/null)"; then
+        if [[ "$owner" != "$container_name" ]]; then
+            printf 'Volume %s belongs to another deployment.\n' "$data_volume" >&2
+            return 1
         fi
-    done
+        volumes+=("$data_volume")
+    fi
 }
 
 crx_check_volume_users() {
@@ -69,7 +67,7 @@ crx_check_volume_users() {
 crx_fetch_release() {
     git check-ref-format --branch "$branch" >/dev/null
     staging="$(mktemp -d)"
-    trap 'rm -r -- "$staging"' EXIT
+    trap 'rm -rf -- "$staging"' EXIT
     git clone --quiet --no-local --depth 1 --single-branch --branch "$branch" -- "$release_repo" "$staging/release"
     [[ "$(git -C "$staging/release" symbolic-ref HEAD)" == "refs/heads/$branch" ]]
     revision="$(git -C "$staging/release" rev-parse HEAD)"
@@ -81,12 +79,19 @@ crx_build_release() {
 }
 
 crx_ensure_mounts() {
+    local directory
+    docker volume create --label "$owner_label=$container_name" "$data_volume" >/dev/null
+    docker run --rm --network none --user 0 --entrypoint /bin/sh \
+        --mount "type=volume,source=$data_volume,target=/data,volume-nocopy" "$image" -ec '
+        for directory do
+            mkdir -p "/data/$directory"
+            chown app:app "/data/$directory"
+        done
+    ' sh "${volume_dirs[@]}"
+
     mounts=()
-    local directory volume
     for directory in "${volume_dirs[@]}"; do
-        volume="$volume_prefix-${directory,,}"
-        docker volume create --label "$owner_label=$container_name" "$volume" >/dev/null
-        mounts+=(--mount "type=volume,source=$volume,target=/app/$directory")
+        mounts+=(--mount "type=volume,source=$data_volume,target=/app/$directory,volume-subpath=$directory,volume-nocopy")
     done
 }
 
@@ -95,6 +100,7 @@ crx_make_container() {
         --network "$network" --dns "$dns" --restart unless-stopped --stop-timeout 35 \
         --log-driver json-file --log-opt max-size=10m --log-opt max-file=3 \
         --label "$owner_label=$container_name" --label "org.opencontainers.image.revision=$revision" \
+        --label "com.docker.compose.project=$server_group" --label "com.docker.compose.service=$server_name" \
         --env CRX_LOCAL_URL --env CRX_LOCAL_TOKEN --env CRX_TELEGRAM_URL --env CRX_COINBASE_WS_URL \
         --env "CRX_BUILD_BRANCH=$branch" "${mounts[@]}" "$image" "$server_id"
 }
