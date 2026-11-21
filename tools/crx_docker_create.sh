@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
-source "$root/tools/crx_docker_common.sh"
+run_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$run_root/tools/crx_docker_common.sh"
+root="${CRX_NEBULA_DIR:-$run_root/..}"
 
 usage() {
     printf 'Usage: %s [--force] <server-name> [<branch> [--dns IP]]\nExample: %s pu30 20261121 --dns 1.1.1.1\nDefault DNS: 8.8.8.8\n' "${0##*/}" "${0##*/}"

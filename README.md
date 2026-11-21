@@ -2,6 +2,8 @@
 
 每個日期 branch 存放一個 crxServer／crxPacker 發佈版本。`app/` 是從 crxNebula 建置的 .NET 10 產物。Docker 映像也包含 Coinbase 即時行情轉發和 Binance K 線服務，兩個端點都只在容器內的 loopback 上運行。
 
+以下的 `./tools/` 指令請從 `crxCloudRun` 根目錄執行。`build_crx_run.sh` 和 `publish_crx_run.sh` 預設使用上一層的 `crxNebula` 原始碼。可用 `CRX_NEBULA_DIR` 指定原始碼目錄。
+
 ## 安裝 Server
 
 先在同一個 Docker Engine 啟動 crxDB，再執行下列指令。只給名稱會列出可用的 release branch，由新到舊。指定 branch 時會將該次 checkout 的 commit 建成映像，容器名稱為 `crx-pu30`，程式內 Server ID 為 `PU30`。日誌、報價和 K 線快取各自有專用 Docker volume。

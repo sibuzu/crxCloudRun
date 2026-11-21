@@ -3,6 +3,15 @@
 release_repo="${CRX_CLOUD_RUN_REPO:-https://github.com/sibuzu/crxCloudRun.git}"
 volume_dirs=(Log Quotes Kline)
 
+crx_source_root() {
+    local source_dir="${CRX_NEBULA_DIR:-$1/..}"
+    if [[ ! -f "$source_dir/crxServer/crxServer.csproj" || ! -f "$source_dir/crxPacker/crxPacker.csproj" ]]; then
+        printf 'crxNebula source checkout not found at %s. Set CRX_NEBULA_DIR to its path.\n' "$source_dir" >&2
+        return 1
+    fi
+    (cd -- "$source_dir" && pwd)
+}
+
 crx_select_server() {
     server_name="${1,,}"
     server_name="${server_name#crx-}"
