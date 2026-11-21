@@ -1,0 +1,5 @@
+.env
+/Log/
+/Quotes/
+/Kline/
+__pycache__/
