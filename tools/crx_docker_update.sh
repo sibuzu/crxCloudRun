@@ -3,12 +3,14 @@ set -euo pipefail
 
 tool_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 source "$tool_dir/crx_docker_common.sh"
-usage() { printf 'Usage: %s <server-name> [<branch>]\n' "${0##*/}"; }
+usage() { printf 'Usage: %s <server-name> [<branch>]\n       %s --telegram-only <server-name>\n' "${0##*/}" "${0##*/}"; }
 
+telegram_only=false
 case "${1:-}" in
     -h|--help) usage; exit 0 ;;
+    --telegram-only) telegram_only=true; shift ;;
 esac
-if (($# < 1 || $# > 2)); then usage >&2; exit 2; fi
+if (($# < 1 || $# > 2)) || [[ "$telegram_only" == true && $# != 1 ]]; then usage >&2; exit 2; fi
 crx_select_server "$1"
 crx_inspect_container
 if [[ -z "$container_id" ]]; then
@@ -17,6 +19,7 @@ if [[ -z "$container_id" ]]; then
 fi
 
 settings="$(docker container inspect --format '{{range .Config.Env}}{{println .}}{{end}}' "$container_id")"
+requested_telegram_url="${CRX_TELEGRAM_URL:-}"
 unset CRX_LOCAL_URL CRX_LOCAL_TOKEN CRX_TELEGRAM_URL CRX_COINBASE_WS_URL
 current_branch=
 while IFS= read -r setting; do
@@ -31,12 +34,29 @@ if [[ -z "$branch" ]]; then
     exit 1
 fi
 current_revision="$(docker container inspect --format '{{index .Config.Labels "org.opencontainers.image.revision"}}' "$container_id")"
-crx_fetch_release
+current_telegram_url="${CRX_TELEGRAM_URL:-}"
+if [[ "$telegram_only" == true ]]; then
+    if [[ -z "$requested_telegram_url" ]]; then
+        requested_telegram_url="$(crx_read_telegram_url "$tool_dir/..")"
+    fi
+    if [[ -z "$requested_telegram_url" ]]; then
+        printf 'Set CRX_TELEGRAM_URL in the environment or crxNebula .env before updating Telegram.\n' >&2
+        exit 1
+    fi
+    export CRX_TELEGRAM_URL="$requested_telegram_url"
+    revision="$current_revision"
+else
+    crx_fetch_release
+fi
 reuse_image=false
 if [[ "$branch" == "$current_branch" && "$revision" == "$current_revision" ]]; then
     group="$(docker container inspect --format '{{index .Config.Labels "com.docker.compose.project"}}' "$container_id")"
-    if [[ "$group" == "$server_group" ]]; then
-        printf '%s already uses branch %s (%s).\n' "$container_name" "$branch" "${revision:0:12}"
+    if [[ "$group" == "$server_group" && "${CRX_TELEGRAM_URL:-}" == "$current_telegram_url" ]]; then
+        if [[ "$telegram_only" == true ]]; then
+            printf '%s already has the configured Telegram URL.\n' "$container_name"
+        else
+            printf '%s already uses branch %s (%s).\n' "$container_name" "$branch" "${revision:0:12}"
+        fi
         exit 0
     fi
     image="$(docker container inspect --format '{{.Image}}' "$container_id")"
@@ -65,7 +85,11 @@ fi
 if new_id="$(crx_make_container)"; then
     if [[ "$running" != true ]] || crx_start_container "$new_id"; then
         docker container rm "$container_id" >/dev/null
-        printf '%s updated to branch %s (%s).\n' "$container_name" "$branch" "${revision:0:12}"
+        if [[ "$telegram_only" == true ]]; then
+            printf '%s updated its Telegram settings.\n' "$container_name"
+        else
+            printf '%s updated to branch %s (%s).\n' "$container_name" "$branch" "${revision:0:12}"
+        fi
         exit 0
     fi
     docker container rm --force "$new_id" >/dev/null

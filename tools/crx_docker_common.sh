@@ -13,6 +13,19 @@ crx_source_root() {
     (cd -- "$source_dir" && pwd)
 }
 
+crx_read_telegram_url() {
+    local run_root="$1"
+    local root="${CRX_NEBULA_DIR:-$run_root/..}"
+    if [[ -z "${CRX_NEBULA_DIR:-}" && ! -f "$root/docker/compose.yaml" ]]; then
+        root="$run_root/../crxNebula"
+    fi
+    if [[ -f "$root/.env" && -f "$root/docker/compose.yaml" ]]; then
+        env -u CRX_TELEGRAM_URL docker compose --env-file "$root/.env" -f "$root/docker/compose.yaml" \
+            --profile all-servers config --format json |
+            python3 -c 'import json, sys; print(json.load(sys.stdin)["services"]["crxserver"]["environment"].get("CRX_TELEGRAM_URL", ""))'
+    fi
+}
+
 crx_select_server() {
     server_name="${1,,}"
     server_name="${server_name#crx-}"
